@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dct_result", "dct_result\dct_result.vcxproj", "{30643618-AC23-46C3-B5FE-BE790E8F65BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{30643618-AC23-46C3-B5FE-BE790E8F65BD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{30643618-AC23-46C3-B5FE-BE790E8F65BD}.Debug|Win32.Build.0 = Debug|Win32
+		{30643618-AC23-46C3-B5FE-BE790E8F65BD}.Release|Win32.ActiveCfg = Release|Win32
+		{30643618-AC23-46C3-B5FE-BE790E8F65BD}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,201 @@
+1 Purpose
+This Part of this specification was developed in response to the growing need for a generic coding method
+of moving pictures and of associated sound for various applications such as digital storage media,
+television broadcasting and communication. The use of this specification means that motion video can be
+manipulated as a form of computer data and can be stored on various storage media, transmitted and
+received over existing and future networks and distributed on existing and future broadcasting channels.
+
+2 Application
+The applications of this specification cover, but are not limited to, such areas as listed below:
+BSS Broadcasting Satellite Service (to the home)
+CATV Cable TV Distribution on optical networks, copper, etc.
+CDAD Cable Digital Audio Distribution
+DSB Digital Sound Broadcasting (terrestrial and satellite broadcasting)
+DTTB Digital Terrestrial Television Broadcasting
+EC Electronic Cinema
+ENG Electronic News Gathering (including SNG, Satellite News Gathering)
+FSS Fixed Satellite Service (e.g. to head ends)
+HTT Home Television Theatre
+IPC Interpersonal Communications (videoconferencing, videophone, etc.)
+ISM Interactive Storage Media (optical disks, etc.)
+MMM Multimedia Mailing
+NCA News and Current Affairs
+NDB Networked Database Services (via ATM, etc.)
+RVS Remote Video Surveillance
+SSM Serial Storage Media (digital VTR, etc.)
+
+3 Profiles and levels
+This specification is intended to be generic in the sense that it serves a wide range of applications, bitrates,
+resolutions, qualities and services. Applications should cover, among other things, digital storage media,
+television broadcasting and communications. In the course of creating this specification, various
+requirements from typical applications have been considered, necessary algorithmic elements have been
+developed, and they have been integrated into a single syntax. Hence this specification will facilitate the
+bitstream interchange among different applications.
+Considering the practicality of implementing the full syntax of this specification, however, a limited
+number of subsets of the syntax are also stipulated by means of ¡°profile¡± and ¡°level¡±. These and other
+related terms are formally defined in clause 3 of this specification.
+A ¡°profile¡± is a defined subset of the entire bitstream syntax that is defined by this specification. Within
+the bounds imposed by the syntax of a given profile it is still possible to require a very large variation in
+the performance of encoders and decoders depending upon the values taken by parameters in the
+bitstream. For instance it is possible to specify frame sizes as large as (approximately) 214 samples wide
+by 214 lines high. It is currently neither practical nor economic to implement a decoder capable of
+dealing with all possible frame sizes.
+In order to deal with this problem ¡°levels¡± are defined within each profile. A level is a defined set of
+constraints imposed on parameters in the bitstream. These constraints may be simple limits on numbers.
+Alternatively they may take the form of constraints on arithmetic combinations of the parameters (e.g.
+frame width multiplied by frame height multiplied by frame rate).
+Bitstreams complying with this specification use a common syntax. In order to achieve a subset of the
+complete syntax flags and parameters are included in the bitstream that signal the presence or otherwise
+of syntactic elements that occur later in the bitstream. In order to specify constraints on the syntax (and
+hence define a profile) it is thus only necessary to constrain the values of these flags and parameters that
+specify the presence of later syntactic elements.
+
+4 The scalable and the non-scalable syntax
+The full syntax can be divided into two major categories: One is the non-scalable syntax, which is
+structured as a super set of the syntax defined in ISO/IEC 11172-2. The main feature of the non-scalable
+syntax is the extra compression tools for interlaced video signals. The second is the scalable syntax, the
+key property of which is to enable the reconstruction of useful video from pieces of a total bitstream. This
+is achieved by structuring the total bitstream in two or more layers, starting from a standalone base layer
+and adding a number of enhancement layers. The base layer can use the non-scalable syntax, or in some
+situations conform to the ISO/IEC 11172-2 syntax.
+
+4.1 Overview of the non-scalable syntax
+The coded representation defined in the non-scalable syntax achieves a high compression ratio while
+preserving good image quality. The algorithm is not lossless as the exact sample values are not preserved
+during coding. Obtaining good image quality at the bitrates of interest demands very high compression,
+which is not achievable with intra picture coding alone. The need for random access, however, is best
+satisfied with pure intra picture coding. The choice of the techniques is based on the need to balance a
+high image quality and compression ratio with the requirement to make random access to the coded
+bitstream.
+A number of techniques are used to achieve high compression. The algorithm first uses block-based
+motion compensation to reduce the temporal redundancy. Motion compensation is used both for causal
+prediction of the current picture from a previous picture, and for non-causal, interpolative prediction from
+past and future pictures. Motion vectors are defined for each 16-sample by 16-line region of the picture.
+The prediction error, is further compressed using the discrete cosine transform (DCT) to remove spatial
+correlation before it is quantised in an irreversible process that discards the less important information.
+Finally, the motion vectors are combined with the quantised DCT information, and encoded using
+variable length codes.
+
+4.1.1 Temporal processing
+Because of the conflicting requirements of random access and highly efficient compression, three main
+picture types are defined. Intra coded pictures (I-Pictures) are coded without reference to other pictures.
+They provide access points to the coded sequence where decoding can begin, but are coded with only
+moderate compression. Predictive coded pictures (P-Pictures) are coded more efficiently using motion
+compensated prediction from a past intra or predictive coded picture and are generally used as a reference
+for further prediction. Bidirectionally-predictive coded pictures (B-Pictures) provide the highest degree of
+compression but require both past and future reference pictures for motion compensation. Bidirectionallypredictive
+coded pictures are never used as references for prediction (except in the case that the resulting
+picture is used as a reference in a spatially scalable enhancement layer). The organisation of the three
+picture types in a sequence is very flexible. The choice is left to the encoder and will depend on the
+requirements of the application. Figure I-1 illustrates an example of the relationship among the three
+different picture types.
+
+4.1.2 Coding interlaced video
+Each frame of interlaced video consists of two fields which are separated by one field-period. The
+specification allows either the frame to be encoded as picture or the two fields to be encoded as two
+pictures. Frame encoding or field encoding can be adaptively selected on a frame-by-frame basis. Frame
+encoding is typically preferred when the video scene contains significant detail with limited motion. Field
+encoding, in which the second field can be predicted from the first, works better when there is fast
+movement.
+
+4.1.3 Motion representation - macroblocks
+As in ISO/IEC 11172-2, the choice of 16 by 16 macroblocks for the motion-compensation unit is a result
+of the trade-off between the coding gain provided by using motion information and the overhead needed to
+represent it. Each macroblock can be temporally predicted in one of a number of different ways. For
+example, in frame encoding, the prediction from the previous reference frame can itself be either framebased
+or field-based. Depending on the type of the macroblock, motion vector information and other side
+information is encoded with the compressed prediction error in each macroblock. The motion vectors are
+encoded differentially with respect to the last encoded motion vectors using variable length codes. The
+maximum length of the motion vectors that may be represented can be programmed, on a picture-bypicture
+basis, so that the most demanding applications can be met without compromising the performance
+of the system in more normal situations.
+It is the responsibility of the encoder to calculate appropriate motion vectors. The specification does not
+specify how this should be done.
+
+4.1.4 Spatial redundancy reduction
+Both source pictures and prediction errors have high spatial redundancy. This specification uses a blockbased
+DCT method with visually weighted quantisation and run-length coding. After motion compensated
+prediction or interpolation, the resulting prediction error is split into 8 by 8 blocks. These are transformed
+into the DCT domain where they are weighted before being quantised. After quantisation many of the
+DCT coefficients are zero in value and so two-dimensional run-length and variable length coding is used
+to encode the remaining DCT coefficients efficiently.
+
+4.1.5 Chrominance formats
+In addition to the 4:2:0 format supported in ISO/IEC 11172-2 this specification supports 4:2:2 and 4:4:4
+chrominance formats.
+
+4.2 Scalable extensions
+The scalability tools in this specification are designed to support applications beyond that supported by
+single layer video. Among the noteworthy applications areas addressed are video telecommunications,
+video on asynchronous transfer mode networks (ATM), interworking of video standards, video service
+hierarchies with multiple spatial, temporal and quality resolutions, HDTV with embedded TV, systems
+allowing migration to higher temporal resolution HDTV etc. Although a simple solution to scalable video
+is the simulcast technique which is based on transmission/storage of multiple independently coded
+reproductions of video, a more efficient alternative is scalable video coding, in which the bandwidth
+allocated to a given reproduction of video can be partially re-utilised in coding of the next reproduction of
+video. In scalable video coding, it is assumed that given a coded bitstream, decoders of various
+complexities can decode and display appropriate reproductions of coded video. A scalable video encoder
+is likely to have increased complexity when compared to a single layer encoder. However, this standard
+provides several different forms of scalabilities that address non-overlapping applications with
+corresponding complexities. The basic scalability tools offered are: data partitioning, SNR scalability,
+spatial scalability and temporal scalability. Moreover, combinations of these basic scalability tools are
+also supported and are referred to as hybrid scalability. In the case of basic scalability, two layers of video
+referred to as the lower layer and the enhancement layer are allowed, whereas in hybrid scalability up to
+three layers are supported. The following Tables provide a few example applications of various
+scalabilities.
+
+4.2.1 Spatial scalable extension
+Spatial scalability is a tool intended for use in video applications involving telecommunications,
+interworking of video standards, video database browsing, interworking of HDTV and TV etc., i.e., video
+systems with the primary common feature that a minimum of two layers of spatial resolution are
+necessary. Spatial scalability involves generating two spatial resolution video layers from a single video
+source such that the lower layer is coded by itself to provide the basic spatial resolution and the
+enhancement layer employs the spatially interpolated lower layer and carries the full spatial resolution of
+the input video source. The lower and the enhancement layers may either both use the coding tools in this
+specification, or the ISO/IEC 11172-2 standard for the lower layer and this specification for the
+enhancement layer. The latter case achieves a further advantage by facilitating interworking between
+video coding standards. Moreover, spatial scalability offers flexibility in choice of video formats to be
+employed in each layer. An additional advantage of spatial scalability is its ability to provide resilience to
+transmission errors as the more important data of the lower layer can be sent over channel with better
+error performance, while the less critical enhancement layer data can be sent over a channel with poor
+error performance.
+
+4.2.2 SNR scalable extension
+SNR scalability is a tool intended for use in video applications involving telecommunications, video
+services with multiple qualities, standard TV and HDTV, i.e., video systems with the primary common
+feature that a minimum of two layers of video quality are necessary. SNR scalability involves generating
+two video layers of same spatial resolution but different video qualities from a single video source such
+that the lower layer is coded by itself to provide the basic video quality and the enhancement layer is
+coded to enhance the lower layer. The enhancement layer when added back to the lower layer regenerates
+a higher quality reproduction of the input video. The lower and the enhancement layers may either use
+this specification or ISO/IEC 11172-2 standard for the lower layer and this specification for the
+enhancement layer. An additional advantage of SNR scalability is its ability to provide high degree of
+resilience to transmission errors as the more important data of the lower layer can be sent over channel
+with better error performance, while the less critical enhancement layer data can be sent over a channel
+with poor error performance.
+
+4.2.3 Temporal scalable extension
+Temporal scalability is a tool intended for use in a range of diverse video applications from
+telecommunications to HDTV for which migration to higher temporal resolution systems from that of
+lower temporal resolution systems may be necessary. In many cases, the lower temporal resolution video
+systems may be either the existing systems or the less expensive early generation systems, with the
+motivation of introducing more sophisticated systems gradually. Temporal scalability involves
+partitioning of video frames into layers, whereas the lower layer is coded by itself to provide the basic
+temporal rate and the enhancement layer is coded with temporal prediction with respect to the lower layer,
+these layers when decoded and temporal multiplexed to yield full temporal resolution of the video source.
+The lower temporal resolution systems may only decode the lower layer to provide basic temporal
+resolution, whereas more sophisticated systems of the future may decode both layers and provide high
+temporal resolution video while maintaining interworking with earlier generation systems. An additional
+advantage of temporal scalability is its ability to provide resilience to transmission errors as the more
+important data of the lower layer can be sent over channel with better error performance, while the less
+critical enhancement layer can be sent over a channel with poor error performance.
+
+4.2.4 Data partitioning extension
+Data partitioning is a tool intended for use when two channels are available for transmission and/or
+storage of a video bitstream, as may be the case in ATM networks, terrestrial broadcast, magnetic media,
+etc. The bitstream is partitioned between these channels such that more critical parts of the bitstream
+(such as headers, motion vectors, low frequency DCT coefficients) are transmitted in the channel with the
+better error performance, and less critical data (such as higher frequency DCT coefficients) is transmitted
+in the channel with poor error performance. Thus, degradation to channel errors are minimised since the
+critical parts of a bitstream are better protected. Data from neither channel may be decoded on a decoder
+that is not intended for decoding data partitioned bitstreams.
